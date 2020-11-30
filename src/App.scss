@@ -1,0 +1,10 @@
+#map {
+  display: flex;
+  flex-direction: row;
+  .cell {
+    background-color: crimson;
+    &:hover {
+      background-color: rgb(216, 82, 109);
+    }
+  }
+}

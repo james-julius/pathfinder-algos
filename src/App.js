@@ -1,13 +1,15 @@
-import './App.css';
-import { useRef, useEffect, useState } from 'react';
+import './App.scss';
+import { useCallback, useEffect, useState } from 'react';
 
 function App() {
-  const canvas = useRef('canvas');
   const [columns, setColumns] = useState(15);
   const [rows, setRows] = useState(15);
-  const [canvasWidth, setCanvasWidth] = useState(30);
-  const [canvasHeight, setCanvasHeight] = useState(30);
-  const [map, setMap] = useState([]);
+  const [cellWidth, setCellWidth] = useState(30);
+  const [cellHeight, setCellHeight] = useState(30);
+  const [map, setMap] = useState([
+    [0, 0, 0],
+    [0, 0, 0]
+  ]);
   const [obstacleFrequency, setObstacleFrequency] = useState(0.3);
 
   class Node {
@@ -20,27 +22,39 @@ function App() {
     }
   }
 
-  function boardSetup() {
-    for (let column of columns) {
-      map.push([]);
-      for (let row of rows) {
-        map[column][row] = new Node(row, column);
+  const mapSetup = useCallback(() => {
+    const mapToBe = [];
+    for (let column = 0; column < columns; column++) {
+      mapToBe.push([]);
+      for (let row = 0; row < rows; row++) {
+        mapToBe[column][row] = new Node(row, column);
       }
     }
-  }
+    console.log('setting map to:' + mapToBe);
+    setMap(mapToBe);
+  }, []);
+
   useEffect(() => {
-    canvas.getContext("2d");
-    canvas.width = canvasWidth * columns;
-    canvas.height = canvasHeight * rows;
-    boardSetup();
+    mapSetup();
   }, []);
 
 
   return (
     <div className="App">
-      <canvas ref="canvas" id="canvas">
-
-      </canvas>
+      <div id="map" style={{height: "auto"}}>
+        {map && map.map((row, idx) => {
+          return <div className="column">
+            {row[idx] && map[idx].map((cell) => {
+              return <>
+                <div 
+                  class={`cell ${cell.class}`} 
+                  style={{height: cellHeight, width: cellWidth}}>
+                </div>
+              </>
+            })}
+          </div>
+        })}
+      </div>
     </div>
   );
 }
